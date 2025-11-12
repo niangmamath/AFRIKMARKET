@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mon Profil</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <a href="/ajouter">Ajouter Annonce</a>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button type="submit">Déconnexion</button>
+        </form>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Mes Annonces</h2>
+    <div class="annonces">
+      <% annonces.forEach(annonce => { %>
+        <div class="annonce">
+          <h3><%= annonce.title %></h3>
+          <p><%= annonce.description %></p>
+          <p>Prix: <%= annonce.price %> €</p>
+          <p>Catégorie: <%= annonce.category %></p>
+          <p>Lieu: <%= annonce.location %></p>
+          <p>
+            Statut:
+            <% if (annonce.status === 'pending') { %>
+              <span style="color: #ffc107; font-weight: bold;">En attente d'approbation</span>
+            <% } else if (annonce.status === 'approved') { %>
+              <span style="color: #28a745; font-weight: bold;">Approuvée</span>
+            <% } else if (annonce.status === 'rejected') { %>
+              <span style="color: #dc3545; font-weight: bold;">Rejetée</span>
+            <% } %>
+          </p>
+          <% if (annonce.adminComment && annonce.adminComment.trim() !== '') { %>
+            <p><strong>Commentaire admin:</strong> <%= annonce.adminComment %></p>
+          <% } %>
+          <% if (annonce.images.length > 0) { %>
+            <img src="<%= annonce.images[0] %>" alt="Image" width="200">
+          <% } %>
+          <a href="/edit/<%= annonce._id %>">Modifier</a>
+          <form action="/delete/<%= annonce._id %>" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.')">
+            <button type="submit">Supprimer</button>
+          </form>
+        </div>
+      <% }); %>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

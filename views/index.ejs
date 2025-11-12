@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site d'Annonces - Achetez, vendez, louez</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <a href="/annonces">Annonces</a>
+        <a href="/blogs">Blog</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/ajouter">Ajouter Annonce</a>
+          <a href="/profil">Mon Profil</a>
+          <form action="/logout" method="POST" style="display:inline;">
+            <button type="submit">Déconnexion</button>
+          </form>
+        <% } else { %>
+          <a href="/login">Connexion</a>
+          <a href="/register">Inscription</a>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Bienvenue sur AfrikMarket</h1>
+        <p class="hero-subtitle">La plateforme simple et rapide pour vendre, acheter ou louer tout ce que vous voulez !</p>
+        <p class="hero-description">Publiez gratuitement vos annonces et touchez des milliers d'utilisateurs chaque jour.</p>
+
+        <div class="hero-categories">
+          <span class="category-tag">🚗 Véhicules</span>
+          <span class="category-tag">🏠 Immobilier</span>
+          <span class="category-tag">💻 Informatique</span>
+          <span class="category-tag">👕 Mode</span>
+          <span class="category-tag">📱 Téléphones</span>
+          <span class="category-tag">et bien plus encore</span>
+        </div>
+
+        <div class="hero-features">
+          <div class="feature-item">
+            <span class="feature-icon">➕</span>
+            <span>Déposez votre annonce en quelques clics</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔎</span>
+            <span>Trouvez les meilleures offres près de chez vous</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">💬</span>
+            <span>Contactez directement les vendeurs</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <% if (typeof user !== 'undefined' && user) { %>
+            <a href="/ajouter" class="btn btn-primary">Publier une annonce</a>
+          <% } else { %>
+            <a href="/register" class="btn btn-primary">Commencez dès maintenant</a>
+          <% } %>
+          <a href="#annonces" class="btn btn-secondary">Voir les annonces</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-illustration">
+          <div class="floating-card card-1" data-aos="fade-up" data-aos-delay="0">
+            <i class="fas fa-car"></i>
+            <span>Véhicules</span>
+          </div>
+          <div class="floating-card card-2" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-home"></i>
+            <span>Immobilier</span>
+          </div>
+          <div class="floating-card card-3" data-aos="fade-up" data-aos-delay="400">
+            <i class="fas fa-laptop"></i>
+            <span>Informatique</span>
+          </div>
+          <div class="floating-card card-4" data-aos="fade-up" data-aos-delay="600">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Téléphones</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="modern-layout">
+    <!-- Search Section -->
+    <section id="annonces" class="search-section">
+      <div class="container">
+        <div class="search-container">
+          <h2>Découvrez les meilleures annonces</h2>
+          <form action="/" method="GET" class="search-form">
+            <input type="text" name="search" placeholder="Rechercher par titre" class="search-input">
+            <input type="text" name="category" placeholder="Catégorie" class="search-input">
+            <input type="text" name="location" placeholder="Lieu" class="search-input">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Annonces Section -->
+    <section class="annonces-section">
+      <div class="container">
+        <h2>Annonces Récentes</h2>
+        <div class="annonces-grid">
+          <% annonces.forEach((annonce, index) => { %>
+            <div class="annonce-card" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+              <% if (annonce.images.length > 0) { %>
+                <div class="annonce-image">
+                  <img src="<%= annonce.images[0] %>" alt="Image">
+                </div>
+              <% } %>
+              <div class="annonce-content">
+                <h3><a href="/annonce/<%= annonce._id %>"><%= annonce.title %></a></h3>
+                <p class="annonce-description"><%= annonce.description %></p>
+                <div class="annonce-details">
+                  <span class="price"><%= annonce.price %> MAD</span>
+                  <span class="category"><%= annonce.category %></span>
+                  <span class="location"><i class="fas fa-map-marker-alt"></i> <%= annonce.location %></span>
+                </div>
+                <p class="annonce-author">Par: <%= annonce.user.name %></p>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

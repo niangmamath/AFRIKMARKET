@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - Site Annonce</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="admin-dashboard">
+  <header class="admin-header">
+    <div class="logo" style="position: absolute; left: 2rem; top: 50%; transform: translateY(-50%);">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo" style="height: 40px;">
+    </div>
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard Administrateur</h1>
+    <nav class="admin-nav">
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/admin/users"><i class="fas fa-users"></i> Gérer Utilisateurs</a>
+      <a href="/admin/annonces"><i class="fas fa-bullhorn"></i> Gérer Annonces</a>
+      <a href="/admin/blogs"><i class="fas fa-blog"></i> Gérer Blogs</a>
+      <form action="/logout" method="POST" style="display:inline;">
+        <button type="submit" class="btn-admin" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="admin-main">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3><i class="fas fa-users"></i> Total Utilisateurs</h3>
+        <p><%= totalUsers %></p>
+      </div>
+      <div class="stat-card">
+        <h3><i class="fas fa-bullhorn"></i> Total Annonces</h3>
+        <p><%= totalAnnonces %></p>
+      </div>
+      <div class="stat-card">
+        <h3><i class="fas fa-clock"></i> Annonces en Attente</h3>
+        <p><%= pendingAnnonces %></p>
+      </div>
+    </div>
+
+    <div class="admin-table-section">
+      <h2><i class="fas fa-user-clock"></i> Utilisateurs Récents</h2>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th><i class="fas fa-user"></i> Nom</th>
+            <th><i class="fas fa-envelope"></i> Email</th>
+            <th><i class="fas fa-crown"></i> Rôle</th>
+            <th><i class="fas fa-calendar"></i> Date d'inscription</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentUsers.forEach(user => { %>
+            <tr>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td>
+                <% if (user.role === 'admin') { %>
+                  <span style="color: #667eea; font-weight: bold;"><i class="fas fa-crown"></i> Admin</span>
+                <% } else { %>
+                  <span><i class="fas fa-user"></i> Utilisateur</span>
+                <% } %>
+              </td>
+              <td><%= user.createdAt.toLocaleDateString('fr-FR') %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-table-section">
+      <h2><i class="fas fa-clock"></i> Annonces Récentes</h2>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th><i class="fas fa-heading"></i> Titre</th>
+            <th><i class="fas fa-user"></i> Auteur</th>
+            <th><i class="fas fa-euro-sign"></i> Prix</th>
+            <th><i class="fas fa-tag"></i> Catégorie</th>
+            <th><i class="fas fa-calendar"></i> Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentAnnonces.forEach(annonce => { %>
+            <tr>
+              <td><a href="/annonce/<%= annonce._id %>"><%= annonce.title %></a></td>
+              <td><%= annonce.user ? annonce.user.name : '<em>Utilisateur supprimé</em>' %></td>
+              <td><strong><%= annonce.price %> €</strong></td>
+              <td><span style="background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.9rem;"><%= annonce.category %></span></td>
+              <td><%= annonce.createdAt.toLocaleDateString('fr-FR') %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

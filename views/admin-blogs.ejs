@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gérer Blogs - Dashboard Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="admin-dashboard">
+  <header class="admin-header">
+    <div class="logo" style="position: absolute; left: 2rem; top: 50%; transform: translateY(-50%);">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo" style="height: 40px;">
+    </div>
+    <h1><i class="fas fa-blog"></i> Gestion des Blogs</h1>
+    <nav class="admin-nav">
+      <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="/admin/users"><i class="fas fa-users"></i> Utilisateurs</a>
+      <a href="/admin/annonces"><i class="fas fa-bullhorn"></i> Annonces</a>
+      <a href="/admin/blogs" class="active"><i class="fas fa-blog"></i> Blogs</a>
+      <form action="/logout" method="POST" style="display:inline;">
+        <button type="submit" class="btn-admin" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </form>
+    </nav>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-actions">
+      <a href="/admin/blogs/create" class="btn-admin btn-primary">
+        <i class="fas fa-plus"></i> Nouveau Blog
+      </a>
+    </div>
+
+    <div class="admin-table-section">
+      <h2><i class="fas fa-list"></i> Tous les Blogs</h2>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th><i class="fas fa-image"></i> Image</th>
+            <th><i class="fas fa-heading"></i> Titre</th>
+            <th><i class="fas fa-user"></i> Auteur</th>
+            <th><i class="fas fa-tag"></i> Statut</th>
+            <th><i class="fas fa-eye"></i> Vues</th>
+            <th><i class="fas fa-calendar"></i> Date</th>
+            <th><i class="fas fa-cogs"></i> Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% blogs.forEach(blog => { %>
+            <tr>
+              <td>
+                <% if (blog.image) { %>
+                  <img src="<%= blog.image %>" alt="<%= blog.title %>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                <% } else { %>
+                  <i class="fas fa-image" style="font-size: 2rem; color: #ccc;"></i>
+                <% } %>
+              </td>
+              <td><%= blog.title %></td>
+              <td><%= blog.author ? blog.author.name : '<em>Auteur supprimé</em>' %></td>
+              <td>
+                <% if (blog.status === 'published') { %>
+                  <span style="color: #28a745; font-weight: bold;"><i class="fas fa-check-circle"></i> Publié</span>
+                <% } else { %>
+                  <span style="color: #ffc107; font-weight: bold;"><i class="fas fa-edit"></i> Brouillon</span>
+                <% } %>
+              </td>
+              <td><%= blog.views %></td>
+              <td><%= blog.createdAt.toLocaleDateString('fr-FR') %></td>
+              <td>
+                <a href="/admin/blogs/<%= blog._id %>/edit" class="btn-admin btn-edit">
+                  <i class="fas fa-edit"></i> Modifier
+                </a>
+                <form action="/admin/blogs/<%= blog._id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce blog ?');">
+                  <button type="submit" class="btn-admin btn-delete">
+                    <i class="fas fa-trash"></i> Supprimer
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

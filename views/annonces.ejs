@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annonces - AfrikMarket</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <a href="/annonces" class="active">Annonces</a>
+        <a href="/blogs">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/about">À propos</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/ajouter">Ajouter Annonce</a>
+          <a href="/profil">Mon Profil</a>
+          <form action="/logout" method="POST" style="display:inline;">
+            <button type="submit">Déconnexion</button>
+          </form>
+        <% } else { %>
+          <a href="/login">Connexion</a>
+          <a href="/register">Inscription</a>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Toutes les Annonces</h1>
+      <p>Découvrez toutes les annonces disponibles sur AfrikMarket</p>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-container">
+        <form action="/annonces" method="GET" class="search-form">
+          <input type="text" name="search" placeholder="Rechercher par titre">
+          <input type="text" name="category" placeholder="Catégorie">
+          <input type="text" name="location" placeholder="Lieu">
+          <button type="submit">Rechercher</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Annonces Section -->
+    <section class="annonces-section">
+      <div class="annonces">
+        <% annonces.forEach(annonce => { %>
+          <div class="annonce">
+            <% if (annonce.images.length > 0) { %>
+              <div class="annonce-image">
+                <img src="<%= annonce.images[0] %>" alt="Image">
+              </div>
+            <% } %>
+            <div class="annonce-content">
+              <h2><a href="/annonce/<%= annonce._id %>"><%= annonce.title %></a></h2>
+              <p class="annonce-description"><%= annonce.description %></p>
+              <div class="annonce-details">
+                <span class="price"><%= annonce.price %> MAD</span>
+                <span class="category"><%= annonce.category %></span>
+                <span class="location"><i class="fas fa-map-marker-alt"></i> <%= annonce.location %></span>
+              </div>
+              <p class="annonce-author">Par: <%= annonce.user.name %></p>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

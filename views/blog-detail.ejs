@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= blog.title %> - Blog AfrikMarket</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <a href="/annonces">Annonces</a>
+        <a href="/blogs">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/about">À propos</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/profil">Profil</a>
+          <form action="/logout" method="POST" style="display:inline;">
+            <button type="btn-logout">Déconnexion</button>
+          </form>
+        <% } else { %>
+          <a href="/login">Connexion</a>
+          <a href="/register">Inscription</a>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <article class="blog-detail">
+      <% if (blog.image) { %>
+        <img src="<%= blog.image %>" alt="<%= blog.title %>" class="blog-detail-image">
+      <% } %>
+      <h1><%= blog.title %></h1>
+      <div class="blog-meta">
+        <span><i class="fas fa-user"></i> Par <%= blog.author ? blog.author.name : 'Auteur inconnu' %></span>
+        <span><i class="fas fa-calendar"></i> <%= blog.createdAt.toLocaleDateString('fr-FR') %></span>
+        <span><i class="fas fa-eye"></i> <%= blog.views %> vues</span>
+        <span><i class="fas fa-heart"></i> <%= blog.likes.length %> likes</span>
+      </div>
+      <div class="blog-content">
+        <%- blog.content.replace(/\n/g, '<br>') %>
+      </div>
+      <% if (blog.tags && blog.tags.length > 0) { %>
+        <div class="blog-tags">
+          <i class="fas fa-tags"></i>
+          <% blog.tags.forEach(tag => { %>
+            <span class="tag"><%= tag %></span>
+          <% }); %>
+        </div>
+      <% } %>
+      <div class="blog-actions">
+        <form action="/blog/<%= blog._id %>/like" method="POST" style="display:inline;">
+          <button type="submit" class="btn-like">
+            <i class="fas fa-heart"></i> <%= blog.likes.length %> J'aime
+          </button>
+        </form>
+      </div>
+    </article>
+
+    <section class="comments-section">
+      <h2><i class="fas fa-comments"></i> Commentaires (<%= blog.comments.length %>)</h2>
+
+      <% if (typeof user !== 'undefined' && user) { %>
+        <form action="/blog/<%= blog._id %>/comment" method="POST" class="comment-form">
+          <textarea name="text" placeholder="Écrivez votre commentaire..." required></textarea>
+          <button type="submit" class="btn-comment">Publier le commentaire</button>
+        </form>
+      <% } else { %>
+        <p><a href="/login">Connectez-vous</a> pour laisser un commentaire.</p>
+      <% } %>
+
+      <div class="comments-list">
+        <% blog.comments.forEach(comment => { %>
+          <div class="comment">
+            <div class="comment-header">
+              <strong><%= comment.user ? comment.user.name : 'Utilisateur supprimé' %></strong>
+              <span><%= comment.createdAt.toLocaleDateString('fr-FR') %></span>
+            </div>
+            <p><%= comment.text %></p>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

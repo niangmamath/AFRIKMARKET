@@ -1,0 +1,62 @@
+ <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifier Annonce</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <a href="/profil">Mon Profil</a>
+        <form action="/logout" method="POST" style="display:inline;">
+          <button type="submit">Déconnexion</button>
+        </form>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <form action="/edit/<%= annonce._id %>" method="POST" enctype="multipart/form-data">
+      <label for="title">Titre:</label>
+      <input type="text" id="title" name="title" value="<%= annonce.title %>" required>
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" required><%= annonce.description %></textarea>
+
+      <label for="price">Prix:</label>
+      <input type="number" id="price" name="price" value="<%= annonce.price %>" required>
+
+      <label for="category">Catégorie:</label>
+      <input type="text" id="category" name="category" value="<%= annonce.category %>" required>
+
+      <label for="location">Lieu:</label>
+      <input type="text" id="location" name="location" value="<%= annonce.location %>" required>
+
+      <label for="images">Images (optionnel, remplace les images existantes):</label>
+      <input type="file" id="images" name="images" multiple accept="image/*">
+
+      <button type="submit">Modifier Annonce</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

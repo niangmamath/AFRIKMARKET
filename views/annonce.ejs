@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Annonce</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="/images/LOGO_AFRIKMARKET.jpg" alt="AfrikMarket Logo">
+    </div>
+    <nav>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-menu">
+        <a href="/">Accueil</a>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/ajouter">Ajouter Annonce</a>
+          <a href="/profil">Mon Profil</a>
+          <form action="/logout" method="POST" style="display:inline;">
+            <button type="submit">Déconnexion</button>
+          </form>
+        <% } else { %>
+          <a href="/login">Connexion</a>
+          <a href="/register">Inscription</a>
+        <% } %>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="annonce-detail">
+      <h2><%= annonce.title %></h2>
+      <p><%= annonce.description %></p>
+      <p>Prix: <%= annonce.price %> €</p>
+      <p>Catégorie: <%= annonce.category %></p>
+      <p>Lieu: <%= annonce.location %></p>
+      <% annonce.images.forEach(image => { %>
+        <img src="<%= image %>" alt="Image" width="300">
+      <% }); %>
+      <p>Par: <%= annonce.user.name %></p>
+      <p>Publié le: <%= new Date(annonce.createdAt).toLocaleDateString() %></p>
+
+      <% if (user && canLike) { %>
+        <div class="like-section">
+          <button id="like-btn" class="<%= isLiked ? 'liked' : '' %>">
+            ❤️ <%= likeCount %> Like<%= likeCount !== 1 ? 's' : '' %>
+          </button>
+        </div>
+      <% } %>
+
+      <div class="comments-section">
+        <h3>Commentaires</h3>
+        <% if (user) { %>
+          <form id="comment-form">
+            <textarea id="comment-text" placeholder="Écrivez un commentaire..." required></textarea>
+            <button type="submit">Commenter</button>
+          </form>
+        <% } %>
+
+        <div id="comments-list">
+          <% if (annonce.comments && annonce.comments.length > 0) { %>
+            <% annonce.comments.forEach(comment => { %>
+              <div class="comment">
+                <strong><%= comment.user.name %></strong>
+                <p><%= comment.text %></p>
+                <small><%= new Date(comment.createdAt).toLocaleString() %></small>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <p class="no-comments">Aucun commentaire pour le moment.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 AfrikMarket. Tous droits réservés.</p>
+    <a href="/">Accueil</a>
+    <a href="/contact">Contact</a>
+    <a href="/about">À propos</a>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
