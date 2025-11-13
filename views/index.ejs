@@ -136,7 +136,7 @@
                   <span class="category"><%= annonce.category %></span>
                   <span class="location"><i class="fas fa-map-marker-alt"></i> <%= annonce.location %></span>
                 </div>
-                <p class="annonce-author">Par: <%= annonce.user.name %></p>
+                <p class="annonce-author">Par: <%= annonce.user ? annonce.user.name : 'Utilisateur inconnu' %></p>
               </div>
             </div>
           <% }); %>
