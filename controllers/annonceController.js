@@ -1,4 +1,19 @@
 const Annonce = require('../models/Annonce');
+const cloudinary = require('cloudinary').v2;
+
+// Helper function to extract public_id from Cloudinary URL
+function getPublicId(url) {
+  try {
+    const parts = url.split('/');
+    const uploadIndex = parts.indexOf('upload');
+    if (uploadIndex === -1) return null;
+    const publicIdWithExt = parts.slice(uploadIndex + 1).join('/');
+    return publicIdWithExt.split('.')[0]; // Remove file extension
+  } catch (error) {
+    console.error('Error extracting public_id:', error);
+    return null;
+  }
+}
 
 exports.getAllAnnonces = async (req, res) => {
   try {
@@ -58,7 +73,7 @@ exports.getAnnonce = async (req, res) => {
 exports.createAnnonce = async (req, res) => {
   try {
     const { title, description, price, category, location } = req.body;
-    const images = req.files ? req.files.map(file => '/images/' + file.filename) : [];
+    const images = req.files ? req.files.map(file => file.path) : [];
     const annonce = new Annonce({
       title,
       description,
@@ -87,8 +102,22 @@ exports.updateAnnonce = async (req, res) => {
     annonce.price = price;
     annonce.category = category;
     annonce.location = location;
-    if (req.files) {
-      annonce.images = req.files.map(file => '/images/' + file.filename);
+    if (req.files && req.files.length > 0) {
+      // Delete old images from Cloudinary
+      if (annonce.images && annonce.images.length > 0) {
+        for (const imageUrl of annonce.images) {
+          const publicId = getPublicId(imageUrl);
+          if (publicId) {
+            try {
+              await cloudinary.uploader.destroy(publicId);
+            } catch (error) {
+              console.error('Error deleting old image from Cloudinary:', error);
+            }
+          }
+        }
+      }
+      // Set new images
+      annonce.images = req.files.map(file => file.path);
     }
     await annonce.save();
     res.redirect('/annonce/' + annonce._id);
@@ -103,15 +132,19 @@ exports.deleteAnnonce = async (req, res) => {
     if (!annonce || annonce.user.toString() !== req.session.userId) {
       return res.status(403).send('Non autorisé');
     }
-    // Delete associated images from filesystem
-    const fs = require('fs');
-    const path = require('path');
-    annonce.images.forEach(imagePath => {
-      const fullPath = path.join(__dirname, '../public', imagePath);
-      fs.unlink(fullPath, (err) => {
-        if (err) console.error('Error deleting image:', err);
-      });
-    });
+    // Delete associated images from Cloudinary
+    if (annonce.images && annonce.images.length > 0) {
+      for (const imageUrl of annonce.images) {
+        const publicId = getPublicId(imageUrl);
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+          } catch (error) {
+            console.error('Error deleting image from Cloudinary:', error);
+          }
+        }
+      }
+    }
     await Annonce.findByIdAndDelete(req.params.id);
     res.redirect('/profil');
   } catch (error) {

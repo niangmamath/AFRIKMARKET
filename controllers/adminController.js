@@ -62,15 +62,19 @@ exports.deleteAnnonceAdmin = async (req, res) => {
       return res.status(404).send('Annonce non trouvée');
     }
 
-    // Delete associated images
-    const fs = require('fs');
-    const path = require('path');
-    annonce.images.forEach(imagePath => {
-      const fullPath = path.join(__dirname, '../public', imagePath);
-      fs.unlink(fullPath, (err) => {
-        if (err) console.error('Error deleting image:', err);
-      });
-    });
+    // Delete associated images from Cloudinary
+    if (annonce.images && annonce.images.length > 0) {
+      for (const imageUrl of annonce.images) {
+        const publicId = getPublicId(imageUrl);
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+          } catch (error) {
+            console.error('Error deleting image from Cloudinary:', error);
+          }
+        }
+      }
+    }
 
     await Annonce.findByIdAndDelete(req.params.id);
     res.redirect('/admin/annonces');
@@ -176,16 +180,18 @@ exports.updateBlog = async (req, res) => {
     blog.status = status;
 
     if (req.file) {
-      // Delete old image if exists
+      // Delete old image from Cloudinary if exists
       if (blog.image) {
-        const fs = require('fs');
-        const path = require('path');
-        const oldImagePath = path.join(__dirname, '../public', blog.image);
-        fs.unlink(oldImagePath, (err) => {
-          if (err) console.error('Error deleting old image:', err);
-        });
+        const publicId = getPublicId(blog.image);
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+          } catch (error) {
+            console.error('Error deleting old image from Cloudinary:', error);
+          }
+        }
       }
-      blog.image = `/images/${req.file.filename}`;
+      blog.image = req.file.path;
     }
 
     await blog.save();
